@@ -114,31 +114,28 @@ public class War {
                 .replace("%name%", winner.getTown().getName()));
 
         TownWar looser = winner.getOpponent();
+        Town looserTown = looser.getTown();
 
-        float percentage =(looser.getTown().getTownBlocks().size()/100F)*config.getPercentageWinTownblocks();
+        int numberClaims = looserTown.getPurchasedBlocks()+looserTown.getBonusBlocks();
+        float percentage =(numberClaims/100F)*config.getPercentageWinTownblocks();
         int numberTownBlocks = (int) percentage;
         if (numberTownBlocks == 0) numberTownBlocks++;
 
-        winner.sendAllMessage(config.getWinTownblocks().replace("%number%", numberTownBlocks+""));
-        winner.getOpponent().sendAllMessage(config.getLostTownblocks().replace("%number%", numberTownBlocks+""));
+        winner.sendAllMessage(config.getWinTownblocks()
+                .replace("%number%", numberTownBlocks+"")
+        );
 
-        List<TownBlock> townBlocks = Lists.newArrayList();
-        Town looserTown = looser.getTown();
-        for (int i=0; i<numberTownBlocks; i++) {
-            TownBlock townBlock = Iterables.get(looser.getTown().getTownBlocks(), 0);
+        looser.sendAllMessage(config.getLostTownblocks()
+                .replace("%number%", numberTownBlocks+"")
+        );
 
-            townBlocks.add(townBlock);
-            looserTown.removeTownBlock(townBlock);
+        if (looserTown.getPurchasedBlocks()>=numberTownBlocks) {
+            looserTown.setPurchasedBlocks(looserTown.getPurchasedBlocks()-numberTownBlocks);
+        } else if (looserTown.getBonusBlocks()>=numberTownBlocks) {
+            looserTown.setBonusBlocks(looserTown.getBonusBlocks()-numberTownBlocks);
         }
 
-        for (TownBlock townBlock : townBlocks) {
-            try {
-                winner.getTown().addTownBlock(townBlock);
-                townBlock.setTown(winner.getTown());
-            } catch (AlreadyRegisteredException e) {
-                e.printStackTrace();
-            }
-        }
+        winner.getTown().setBonusBlocks(winner.getTown().getBonusBlocks()+numberTownBlocks);
 
         try {
             winner.getTown().getAccount().deposit(moneyReward, "Win war");
