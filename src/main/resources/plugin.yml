@@ -1,0 +1,15 @@
+name: TownyWar
+version: ${project.version}
+main: io.github.niketion.townywar.TownyWarPlugin
+api-version: 1.16
+authors: [ Niketion ]
+softdepend:
+  - Towny
+commands:
+  war:
+    aliases: wars
+    description: TownyWar general command.
+  waradmin:
+    aliases: wara, wa
+    description: TownyWar admin command.
+    permission: "war.admin"

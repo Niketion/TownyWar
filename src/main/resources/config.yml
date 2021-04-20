@@ -1,0 +1,101 @@
+# The (multiplication) co-efficient which adds for the cost of a war
+# residents * coefficient
+cost-declare-war-coeff: 10
+
+# How many players (in percentage) maximum to declare a war
+# Example
+# 60% -> 5 + 60% = 8
+# 5 players towns can be hit by cities with up to 8 players
+more-player-for-war-coeff: 60
+
+# Seconds needed to start the war (preparation time)
+seconds-before-war-starts: 240
+
+# The (multiplication) coefficient that adds to the lives of each town
+# participants * coefficient
+coeff-multiply-lives: 10
+
+# On respawn, for how many seconds players must maintain the indicated effects
+seconds-invicibility-respawn: 20
+seconds-invisibility-respawn: 20
+
+# Time limit for a war, measured in minutes
+time-minute-duration-war: 15
+
+# The percentage of how many townblocks must be acquired
+# by the winning town (in any case at least 1 townblocks)
+percentage-win-townblocks: 10
+
+# How long the graceperiod of the losing town lasts
+grace-period-losers-hour: 5
+
+# Automatically invite allies when the town starts a war
+automatic-invite-ally-start-war: false
+
+no-permission: "&cYou do not have permissions to execute this command!"
+resident-error-message: "&cYou aren't a resident of any town!"
+usage-war-command:
+  - "&6Usage:"
+  - "&e/war - Open the main gui"
+  - "&e/war declare <town> - Declare a war"
+  - "&e/war invite ally <town> - Invite a ally"
+  - "&e/war accept ally <town - Accept a ally"
+  - "&e/war setrespawnchunk"
+respawn-chunk-command: "&aRespawn chunk set successfully!"
+you-respawn-chunk-null: "&cYour town must first set the respawn point with /war setrespawnchunk!"
+target-respawn-chunk-null: "&cThe town you want to declare war doesn't have a spawn!"
+searching-declare-war: "&eSearching for towns you can declare war on..."
+search-not-found: "&cI haven't found any towns you can declare war on."
+not-enough-money: "&cThe town does not have enough money to declare war against this town, the cost is %cost%."
+war-started: "&cWar started against the town of %name%! You have been teleported to the collection point, equip yourself and defeat the enemy forces, you have %seconds% seconds before the war starts!"
+game-start: "&cThe time for equipping is over, you can now kill other players and break blocks! It is no longer possible to invite allies"
+game-cooldown-actionbar: "&a%seconds% seconds from start"
+game-actionbar: "&6Attackers &e%attacker_lives% &7- &6Defenders &e%defender_lives%"
+already-in-war-target: "&cThe town you want to declare war on is already at war with another town!"
+town-in-war: "&eYour town is at war! You cannot perform this action"
+town-win-war-time: "&e&lTown %name% won the war by term of time! Therefore, they will not receive any townblocks"
+town-win-war-life: "&e&lTown %name% has won the war!"
+no-town-won: "&c&lNo town has won the war!"
+town-not-found: "&cTown not found..."
+town-not-in-war: "&cYour town isn't at war!"
+town-not-ally: "&cThe town isn't an ally of your town"
+invite-ally: "&aThe town %name% has invited your town to participate in the war against %target%, use the command &e/war accept ally %name%&a to participate"
+no-invite-to-accept: "&cYour town has no invitation to accept!"
+action-prewar: "&cThis action can only be performed in the pre-war period!"
+already-in-war: "&cYour town is already at war!"
+win-townblocks: "&dYour town won %number% townblocks"
+lost-townblocks: "&dYour town lost %number% townblocks"
+
+whitelist-block-place-war:
+  - COBBLESTONE
+  - DIRT
+whitelist-block-break-war:
+  - COBBLESTONE
+  - DIRT
+
+gui-confirm-war: "&7Confirm War"
+fill-gui-confirm-item: GRAY_STAINED_GLASS_PANE
+confirm-item: GREEN_STAINED_GLASS_PANE
+deny-item: RED_STAINED_GLASS_PANE
+confirm-item-displayname: "&aConfirm War"
+confirm-item-lore:
+  - "&7Click to confirm"
+  - "&7the war against &a%name%"
+deny-item-displayname: "&cDeny"
+deny-item-lore:
+  - "&7Click to deny"
+gui-title-war: "&7Selection"
+material-item-town: PLAYER_HEAD
+displayname-item-town: "&a%name%"
+lore-item-town:
+  - "&7Online players: &e%online%"
+  - ""
+  - "&a&lClick to confirm war"
+current-page-material: NAME_TAG
+current-page-displayname: "&8&lPage %page% of %maxpage%"
+current-page-lore:
+  - "&fYou're currently viewing page %page%"
+previous-page-material: ARROW
+previous-page-displayname: "&a&l← Previous Page"
+next-page-material: ARROW
+next-page-displayname: "&a&lNext Page →"
