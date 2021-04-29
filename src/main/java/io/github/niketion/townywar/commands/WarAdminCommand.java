@@ -6,6 +6,7 @@ import io.github.niketion.townywar.structure.TownWar;
 import io.github.niketion.townywar.structure.War;
 import io.github.niketion.townywar.structure.handlers.WarHandler;
 import io.github.niketion.townywar.utils.ConfigValues;
+import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
@@ -33,7 +34,11 @@ public class WarAdminCommand implements CommandExecutor {
 
         switch (args[0].toLowerCase()) {
             case "stopall": {
-                plugin.getWarHandler().getWars().forEach(((s, war) -> war.end()));
+                plugin.getWarHandler().getWars().forEach(((s, war) -> {
+                    war.sendAllMessage(plugin.getConfigValues().getAdminStopAll().replace("%name%", sender.getName()));
+                    war.end();
+                }));
+
                 return true;
             }
             case "forceend": {
@@ -60,6 +65,7 @@ public class WarAdminCommand implements CommandExecutor {
                     return true;
                 }
 
+                war.sendAllMessage(plugin.getConfigValues().getAdminEnd().replace("%name%", sender.getName()));
                 war.end();
                 sender.sendMessage(ChatColor.GREEN + "War concluded.");
                 return true;
@@ -96,6 +102,10 @@ public class WarAdminCommand implements CommandExecutor {
                         return true;
                     }
                 }
+
+                war.sendAllMessage(plugin.getConfigValues().getAdminWin()
+                        .replace("%name%", sender.getName())
+                        .replace("%town%", townWar.getTown().getName()));
 
                 war.win(townWar);
                 sender.sendMessage(ChatColor.GREEN + "War concluded.");

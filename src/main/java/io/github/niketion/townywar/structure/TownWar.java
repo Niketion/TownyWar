@@ -2,6 +2,7 @@ package io.github.niketion.townywar.structure;
 
 import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
+import com.palmergames.bukkit.towny.TownyUniverse;
 import com.palmergames.bukkit.towny.exceptions.NotRegisteredException;
 import com.palmergames.bukkit.towny.object.Nation;
 import com.palmergames.bukkit.towny.object.Resident;
@@ -33,11 +34,12 @@ public class TownWar {
     private final Town town;
     private final Map<UUID, Participant> participants;
     private final Set<Town> allies;
+    private final Set<UUID> invites;
 
     @Setter private TownWar opponent;
     private Location respawnLocation;
     @Setter private int lives;
-    @Setter private War pendingInvites;
+    private Boolean enabledPvP;
 
     public TownWar(
             WarHandler handler,
@@ -49,6 +51,7 @@ public class TownWar {
         this.respawnLocation = respawnLocation;
         this.participants = Maps.newHashMap();
         this.allies = Sets.newHashSet();
+        this.invites = Sets.newHashSet();
     }
 
     public void setRespawnLocation(Location location) {
@@ -71,14 +74,19 @@ public class TownWar {
     }
 
     public void clearWar() {
+        if (enabledPvP != null) {
+            town.setPVP(false);
+        }
+
         clearParticipants();
         this.lives = 0;
         this.opponent = null;
+        this.invites.clear();
         this.allies.clear();
-        this.pendingInvites = null;
+        this.enabledPvP = null;
     }
 
-    public void registerAlly(War war) {
+    public void registerAlly() {
         Bukkit.getScheduler().runTaskAsynchronously(handler.getPlugin(), () -> {
             Nation nation = null;
             try {
@@ -101,10 +109,36 @@ public class TownWar {
 
             if (handler.getPlugin().getConfigValues().isAutomaticInviteAllyStartWar())  {
                 for (Town ally : allies) {
-                    inviteAlly(ally, war);
+                    inviteAlly(ally);
                 }
             }
         });
+    }
+
+    public boolean isAllyPreRegister(TownWar townWar) {
+        Nation nation = null;
+        try {
+            nation = town.getNation();
+        } catch (NotRegisteredException ignored) { }
+
+        if (nation == null) return false;
+
+
+        for (Nation ally : nation.getAllies()) {
+            for (Town townAlly : ally.getTowns()) {
+                if (townWar.getTown() == townAlly) {
+                    return true;
+                }
+            }
+        }
+
+        for (Town nationTown : nation.getTowns()) {
+            if (townWar.getTown() == nationTown) {
+                return true;
+            }
+        }
+
+        return false;
     }
 
     public boolean isAlly(TownWar townWar) {
@@ -116,7 +150,12 @@ public class TownWar {
         return false;
     }
 
-    public boolean inviteAlly(Town town, War war) {
+    public void enablePvP() {
+        this.enabledPvP = true;
+        town.setPVP(true);
+    }
+
+    public boolean inviteAlly(Town town) {
         TownWar townWar = handler.getTownWar(town.getName());
         if (townWar == null || !isAlly(townWar)) {
             return false;
@@ -129,25 +168,23 @@ public class TownWar {
             if (!player.hasPermission("war.acceptallyinvite")) continue;
 
             player.sendMessage(handler.getPlugin().getConfigValues().getInviteAlly()
-                    .replace("%name%", town.getName())
+                    .replace("%name%", this.town.getName())
                     .replace("%target%", opponent.getTown().getName())
             );
+            invites.add(player.getUniqueId());
         }
 
-        townWar.setPendingInvites(war);
         return true;
     }
 
-    public boolean acceptInvite(TownWar townWar) {
-        if (pendingInvites == null) {
-            return false;
-        }
+    public boolean acceptInvite(TownWar townWar, UUID uuid) {
+        if (!townWar.getInvites().contains(uuid)) return false;
 
-        this.pendingInvites = null;
-        for (Resident resident : TownyUtils.getResidentsOnline(town)) {
-            townWar.addParticipant(resident.getUUID()).teleport();
-        }
-        allies.remove(town);
+        townWar.getInvites().remove(uuid);
+
+        townWar.addParticipant(uuid).teleport();
+        if (!townWar.getTown().isPVP()) townWar.enablePvP();
+
         return true;
     }
 
@@ -257,6 +294,9 @@ public class TownWar {
                 continue;
             }
 
+            player.setAllowFlight(false);
+            player.setFlying(false);
+
             participant.teleport();
         }
     }
@@ -279,7 +319,7 @@ public class TownWar {
                 .values().stream()
                 .filter(
                         townWar -> !handler.hasGrace(townWar.getTown()) && townWar.getTown().getNumResidents() != 0
-                                && townWar != this && !townWar.getTown().isNeutral()
+                                && townWar != this && !townWar.getTown().isNeutral() && !isAllyPreRegister(townWar)
                 ).forEach(
                         townWar -> {
                             int residentOpponent = TownyUtils.getResidentsOnline(townWar.getTown()).size();

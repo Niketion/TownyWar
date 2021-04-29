@@ -65,6 +65,17 @@ action-prewar: "&cThis action can only be performed in the pre-war period!"
 already-in-war: "&cYour town is already at war!"
 win-townblocks: "&dYour town won %number% townblocks"
 lost-townblocks: "&dYour town lost %number% townblocks"
+blacklist-message: "&cYou can't run this command! Your town is at war!"
+blacklist-message-prewar: "&bYou can't run this command! Your town is being prepared for war!"
+cant-declare-war: "&cYou can't declare war on this town!"
+admin-end: "&cThe admin %name% forced the end of the war!"
+admin-win: "&cThe admin %name% forced the win of %town% town!"
+admin-stop-all: "&cThe admin %name% stop all wars!"
+
+blacklist-command-prewar:
+  - "tfly"
+blacklist-command-war:
+  - "tfly"
 
 whitelist-block-place-war:
   - COBBLESTONE

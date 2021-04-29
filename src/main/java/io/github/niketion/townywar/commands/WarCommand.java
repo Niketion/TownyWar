@@ -43,10 +43,7 @@ public class WarCommand implements CommandExecutor {
 
         TownWar town = warHandler.getTownWar(player.getUniqueId());
 
-        if (town == null) {
-            player.sendMessage(config.getResidentErrorMessage());
-            return true;
-        }
+        if (town == null) return true;
 
         if (strings.length == 0) {
             town.selection(player);
@@ -71,7 +68,18 @@ public class WarCommand implements CommandExecutor {
                     return true;
                 }
 
-                warHandler.declare(player, town, warHandler.getTownWar(strings[1]));
+                TownWar target = warHandler.getTownWar(strings[1]);
+                town.findOpponents(request -> {
+                    for (TownWar townWar : request) {
+                        if (townWar == target) {
+                            warHandler.declare(player, town, townWar);
+                            return;
+                        }
+                    }
+
+                    player.sendMessage(config.getCantDeclareWar());
+                });
+
                 return true;
             }
             case "invite": {
@@ -102,7 +110,7 @@ public class WarCommand implements CommandExecutor {
                     return true;
                 }
 
-                if (!town.inviteAlly(allyTownWar.getTown(), war)) {
+                if (!town.inviteAlly(allyTownWar.getTown())) {
                     player.sendMessage(config.getTownNotAlly());
                 }
                 return true;
@@ -135,7 +143,7 @@ public class WarCommand implements CommandExecutor {
                     return true;
                 }
 
-                if (!town.acceptInvite(target)) {
+                if (!town.acceptInvite(target, player.getUniqueId())) {
                     player.sendMessage(config.getNoInviteToAccept());
                 }
                 return true;

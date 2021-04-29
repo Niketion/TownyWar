@@ -160,8 +160,10 @@ public class WarHandler {
         }
 
         attacker.getTown().getAccount().withdraw(calculateMoneyReward(attacker), "War - "+ defender.getTown().getName());
+        if (!attacker.getTown().isPVP()) attacker.enablePvP();
 
         defender.addParticipants(TownyUtils.getResidentsOnline(defender.getTown()));
+        if (!defender.getTown().isPVP()) defender.enablePvP();
 
         War war = new War(this, attacker, defender);
         wars.put(attacker.getTown().getName().toLowerCase(), war);

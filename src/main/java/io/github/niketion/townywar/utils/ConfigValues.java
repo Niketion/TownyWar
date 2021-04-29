@@ -69,10 +69,21 @@ public class ConfigValues {
     private final boolean automaticInviteAllyStartWar;
     private final String winTownblocks;
     private final String lostTownblocks;
+    private final String blacklistMessage;
+    private final String blacklistMessagePrewar;
+    private final List<String> blacklistCommandPrewar;
+    private final List<String> blacklistCommandWar;
+    private final String cantDeclareWar;
+    private final String adminEnd;
+    private final String adminWin;
+    private final String adminStopAll;
 
     public ConfigValues(TownyWarPlugin plugin) {
         FileConfiguration configuration = plugin.getConfig();
 
+        this.adminStopAll = StringUtils.c(configuration.getString("admin-stop-all"));
+        this.adminWin = StringUtils.c(configuration.getString("admin-win"));
+        this.adminEnd = StringUtils.c(configuration.getString("admin-end"));
         this.winTownblocks = StringUtils.c(configuration.getString("win-townblocks"));
         this.lostTownblocks = StringUtils.c(configuration.getString("lost-townblocks"));
         this.automaticInviteAllyStartWar = configuration.getBoolean("automatic-invite-ally-start-war");
@@ -131,6 +142,11 @@ public class ConfigValues {
         this.noInviteToAccept = StringUtils.c(configuration.getString("no-invite-to-accept"));
         this.actionPreWar = StringUtils.c(configuration.getString("action-prewar"));
         this.alreadyInWar = StringUtils.c(configuration.getString("already-in-war"));
+        this.blacklistMessage = StringUtils.c(configuration.getString("blacklist-message"));
+        this.blacklistMessagePrewar = StringUtils.c(configuration.getString("blacklist-message-prewar"));
+        this.blacklistCommandPrewar = configuration.getStringList("blacklist-command-prewar");
+        this.blacklistCommandWar = configuration.getStringList("blacklist-command-war");
+        this.cantDeclareWar = StringUtils.c(configuration.getString("cant-declare-war"));
     }
 
     private Set<Material> loadMaterials(List<String> list) {

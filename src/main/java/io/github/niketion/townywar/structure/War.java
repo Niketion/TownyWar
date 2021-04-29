@@ -47,10 +47,10 @@ public class War {
         this.handler = warHandler;
 
         this.attacker = attacker;
-        this.attacker.registerAlly(this);
+        this.attacker.registerAlly();
 
         this.defender = defender;
-        this.defender.registerAlly(this);
+        this.defender.registerAlly();
 
         this.startTime = System.currentTimeMillis();
 
