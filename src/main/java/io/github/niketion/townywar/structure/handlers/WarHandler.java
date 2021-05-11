@@ -3,8 +3,10 @@ package io.github.niketion.townywar.structure.handlers;
 import com.google.common.collect.Maps;
 import com.palmergames.bukkit.towny.TownyUniverse;
 import com.palmergames.bukkit.towny.exceptions.NotRegisteredException;
+import com.palmergames.bukkit.towny.exceptions.TownyException;
 import com.palmergames.bukkit.towny.object.Resident;
 import com.palmergames.bukkit.towny.object.Town;
+import com.palmergames.bukkit.towny.object.TownBlock;
 import io.github.niketion.townywar.TownyWarPlugin;
 import io.github.niketion.townywar.structure.TownGrace;
 import io.github.niketion.townywar.structure.TownWar;
@@ -16,6 +18,7 @@ import lombok.Getter;
 import lombok.SneakyThrows;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
+import org.bukkit.World;
 import org.bukkit.entity.Player;
 
 import javax.annotation.Nullable;
@@ -39,13 +42,25 @@ public class WarHandler {
         TownyUniverse.getInstance()
                 .getTowns()
                 .forEach(town -> {
-                    String locationString = plugin.getConfigLocations()
-                            .getConfig().getString(town.getName().toLowerCase());
-
                     Location location = null;
-                    if (locationString != null) {
-                        location = LocationUtils.getLiteLocationFromString(locationString);
-                    }
+                    String locationString = null;
+
+                    try {
+                        locationString = plugin.getConfigLocations()
+                                .getConfig().getString(town.getName().toLowerCase());
+                    } catch (IllegalArgumentException ignored) { }
+
+                    try {
+                        if (locationString != null) {
+                            location = LocationUtils.getLiteLocationFromString(locationString);
+                        } else {
+                            TownBlock townBlock = town.getHomeBlock();
+                            World world = Bukkit.getWorld(townBlock.getWorld().getName());
+                            if (world == null) return;
+
+                            location = LocationUtils.centerOfChunk(world.getChunkAt(townBlock.getX(), townBlock.getZ()));
+                        }
+                    } catch (TownyException ignored) { }
 
                     TownWar townWar = new TownWar(this, town, location);
                     townWars.put(town.getName().toLowerCase(), townWar);

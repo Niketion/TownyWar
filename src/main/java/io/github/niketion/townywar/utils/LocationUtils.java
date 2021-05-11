@@ -1,6 +1,7 @@
 package io.github.niketion.townywar.utils;
 
 import org.bukkit.Bukkit;
+import org.bukkit.Chunk;
 import org.bukkit.Location;
 import org.bukkit.World;
 
@@ -28,6 +29,12 @@ public class LocationUtils {
             return new Location(w, x, y, z, yaw, pitch);
         }
         return null;
+    }
+
+    public static Location centerOfChunk(Chunk c) {
+        Location center = new Location(c.getWorld(), c.getX() << 4, 64, c.getZ() << 4).add(7, 0, 7);
+        center.setY(center.getWorld().getHighestBlockYAt(center));
+        return center;
     }
 
     public static String getLiteStringFromLocation(Location loc) {
