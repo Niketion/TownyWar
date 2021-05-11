@@ -69,13 +69,10 @@ public class PlayerListeners implements Listener {
         ConfigValues config = plugin.getConfigValues();
 
         String command = event.getMessage().toLowerCase();
-        if (command.split(" ").length > 0) {
-            command = command.split(" ")[0];
-        }
 
         if (war.getState() == War.State.GAME) {
             for (String blacklist : config.getBlacklistCommandWar()) {
-                if (("/" + blacklist.toLowerCase()).equals(command)) {
+                if (("/" + blacklist.toLowerCase()).contains(command)) {
                     event.setCancelled(true);
                     player.sendMessage(config.getBlacklistMessage());
                     return;
@@ -83,7 +80,7 @@ public class PlayerListeners implements Listener {
             }
         } else {
             for (String blacklist : config.getBlacklistCommandPrewar()) {
-                if (("/" + blacklist.toLowerCase()).equals(command)) {
+                if (("/" + blacklist.toLowerCase()).contains(command)) {
                     event.setCancelled(true);
                     player.sendMessage(config.getBlacklistMessagePrewar());
                     return;

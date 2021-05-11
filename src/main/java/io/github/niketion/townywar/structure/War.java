@@ -162,7 +162,9 @@ public class War {
                     .replace("%name%", winner.getTown().getName()));
 
             try {
-                winner.getTown().getAccount().deposit(moneyReward, "Win war");
+                if (winner.getTown() != null && winner.getTown().getAccount() != null) {
+                    winner.getTown().getAccount().deposit(moneyReward, "Win war");
+                }
             } catch (EconomyException e) {
                 e.printStackTrace();
             }

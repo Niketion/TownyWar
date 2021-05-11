@@ -52,8 +52,11 @@ public class WarHandler {
                 });
     }
     
-    public void createTown(Town town) {
-        townWars.put(town.getName().toLowerCase(), new TownWar(this, town, null));
+    public void createTown(Town town, Player player) {
+        TownWar townWar = new TownWar(this, town, player.getLocation());
+
+        townWars.put(town.getName().toLowerCase(), townWar);
+        townWar.setRespawnLocation(player.getLocation());
     }
     
     public void removeTown(String town) {

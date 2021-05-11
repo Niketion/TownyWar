@@ -77,10 +77,16 @@ public class ConfigValues {
     private final String adminEnd;
     private final String adminWin;
     private final String adminStopAll;
+    private final String noTerritoryClaimed;
+    private final String respawnChunkNewTown;
+    private final String targetTownNotInWar;
 
     public ConfigValues(TownyWarPlugin plugin) {
         FileConfiguration configuration = plugin.getConfig();
 
+        this.targetTownNotInWar = StringUtils.c(configuration.getString("target-town-not-in-war"));
+        this.respawnChunkNewTown = StringUtils.c(configuration.getString("respawnchunk-new-town"));
+        this.noTerritoryClaimed = StringUtils.c(configuration.getString("no-territory-claimed"));
         this.adminStopAll = StringUtils.c(configuration.getString("admin-stop-all"));
         this.adminWin = StringUtils.c(configuration.getString("admin-win"));
         this.adminEnd = StringUtils.c(configuration.getString("admin-end"));

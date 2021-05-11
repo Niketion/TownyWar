@@ -3,6 +3,7 @@ package io.github.niketion.townywar.listeners;
 import com.palmergames.bukkit.towny.event.DeleteTownEvent;
 import com.palmergames.bukkit.towny.event.NewTownEvent;
 import io.github.niketion.townywar.TownyWarPlugin;
+import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 
@@ -16,7 +17,10 @@ public class TownyListeners implements Listener {
 
     @EventHandler
     public void on(NewTownEvent event) {
-        plugin.getWarHandler().createTown(event.getTown());
+        Player player = event.getTown().getMayor().getPlayer();
+        plugin.getWarHandler().createTown(event.getTown(), player);
+
+        player.sendMessage(plugin.getConfigValues().getRespawnChunkNewTown());
     }
 
     @EventHandler

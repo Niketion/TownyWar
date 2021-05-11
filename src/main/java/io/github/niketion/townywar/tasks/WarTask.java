@@ -17,7 +17,9 @@ public class WarTask extends BukkitRunnable {
 
         ConfigValues config = plugin.getConfigValues();
 
-        plugin.getWarHandler().getWars().forEach((string, war) -> {
+        for (War war : plugin.getWarHandler().getWars().values()) {
+            if (war == null) continue;
+
             war.sendActionBar();
             if (war.getState() != War.State.GAME && System.currentTimeMillis() - war.getStartTime() >=
                     config.getSecondsBeforeWarStarts() * 1000L) {
@@ -29,6 +31,6 @@ public class WarTask extends BukkitRunnable {
                 war.softWin(war.getPossibilityWinner());
                 return;
             }
-        });
+        }
     }
 }

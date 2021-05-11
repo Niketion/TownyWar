@@ -1,5 +1,7 @@
 package io.github.niketion.townywar.commands;
 
+import com.palmergames.bukkit.towny.Towny;
+import com.palmergames.bukkit.towny.TownyAPI;
 import com.palmergames.bukkit.towny.TownyUniverse;
 import com.palmergames.bukkit.towny.exceptions.NotRegisteredException;
 import com.palmergames.bukkit.towny.object.Resident;
@@ -9,6 +11,7 @@ import io.github.niketion.townywar.structure.TownWar;
 import io.github.niketion.townywar.structure.War;
 import io.github.niketion.townywar.structure.handlers.WarHandler;
 import io.github.niketion.townywar.utils.ConfigValues;
+import io.github.niketion.townywar.utils.TownyUtils;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
@@ -126,20 +129,22 @@ public class WarCommand implements CommandExecutor {
                     return true;
                 }
 
-                War war = warHandler.getWar(town);
+                TownWar target = plugin.getWarHandler().getTownWar(strings[2]);
+
+                if (target == null) {
+                    player.sendMessage(config.getTownNotFound());
+                    return true;
+                }
+
+                War war = warHandler.getWar(target);
+
                 if (war == null) {
-                    player.sendMessage(config.getTownNotInWar());
+                    player.sendMessage(config.getTargetTownNotInWar());
                     return true;
                 }
 
                 if (war.getState() != War.State.PREPARATION) {
                     player.sendMessage(config.getActionPreWar());
-                    return true;
-                }
-
-                TownWar target = plugin.getWarHandler().getTownWar(strings[2]);
-                if (target == null) {
-                    player.sendMessage(config.getTownNotFound());
                     return true;
                 }
 
@@ -154,8 +159,15 @@ public class WarCommand implements CommandExecutor {
                     return true;
                 }
 
-                town.setRespawnLocation(player.getLocation());
-                player.sendMessage(config.getRespawnChunkCommand());
+                Town townLoc = TownyAPI.getInstance().getTown(player.getLocation());
+
+                if (townLoc != null && townLoc.getName().equalsIgnoreCase(town.getTown().getName())) {
+                    town.setRespawnLocation(player.getLocation());
+                    player.sendMessage(config.getRespawnChunkCommand());
+                    return true;
+                }
+
+                player.sendMessage(config.getNoTerritoryClaimed());
                 return true;
             }
         }
